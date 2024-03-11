@@ -1,0 +1,2 @@
+class RetrievedArticle < ApplicationRecord
+end
