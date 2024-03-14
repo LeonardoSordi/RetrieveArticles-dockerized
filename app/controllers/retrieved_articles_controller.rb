@@ -1,19 +1,14 @@
 require "http"
-
+require_relative '../services/retrieved_articles/retrieve_index.rb'
 
 class RetrievedArticlesController < ApplicationController
   before_action :set_retrieved_article, only: %i[ show update destroy ]
 
   # GET /retrieved_articles
   def index
-    #@retrieved_articles = RetrievedArticle.all
-
-    response = HTTP.get("http://voxgroup-api-1:3000/articles", :params => {:api_key => "DEMO_KEY"})
-    @retrieved_articles = response
-
-    render json: @retrieved_articles
-
-
+    @retrieved_articles = RetrieveArticlesIndex.retrieve_from_api
+    puts @retrieved_articles
+    render 'retrieved_articles/index'
   end
 
   # GET /retrieved_articles/1

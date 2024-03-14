@@ -13,6 +13,9 @@ services:
     networks:
       - voxgroup_application-network
 
+    depends_on:
+      - api
+
 
 networks:
   voxgroup_application-network:
