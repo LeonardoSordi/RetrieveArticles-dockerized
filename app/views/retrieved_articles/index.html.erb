@@ -8,7 +8,7 @@
 <body>
 <h1>Articles</h1>
 <ul>
-  <% @retrieved_articles.each do |retrieved_article| %>
+  <% @retrieved_articles['articles'].each do |retrieved_article| %>
     <li>
       <h2><%= retrieved_article['title'] %></h2>
       <p><%= retrieved_article['body'] %></p>

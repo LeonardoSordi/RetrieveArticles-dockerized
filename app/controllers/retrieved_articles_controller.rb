@@ -7,8 +7,9 @@ class RetrievedArticlesController < ApplicationController
   # GET /retrieved_articles
   def index
     @retrieved_articles = RetrieveArticlesIndex.retrieve_from_api
-    puts @retrieved_articles
-    render 'retrieved_articles/index'
+
+    #puts @retrieved_articles
+    #render 'retrieved_articles/index'
   end
 
   # GET /retrieved_articles/1
