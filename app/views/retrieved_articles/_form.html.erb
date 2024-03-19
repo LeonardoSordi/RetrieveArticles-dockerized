@@ -1,0 +1,71 @@
+<%= form_with(url: create_article_path, method: 'post') do |form| %>
+
+  <%#try to avoid InvalidAuthenticityToken %>
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+  <div>
+    <%= form.label :title %><br>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :body %><br>
+    <%= form.text_area :body %><br>
+  </div>
+
+  <div>
+    <%= form.label :status %><br>
+    <%= form.select :status, [["Public", "public"], ["Private", "private"], ["Archived", "archived"]], selected: 'public' %>
+  </div>
+
+  <div>
+    <%= form.label :author_name, 'Choose Author' %><br>
+    <%= form.select :author_id, [], { prompt: 'Select Author' }, id: 'author_select' %>
+  </div>
+  <%= form.hidden_field :author_key, id: 'key' %>
+
+  <div>
+    <%= form.label :language, "Choose Language" %>
+    <%= form.select :language, [["English", "en"], ["Italian", "it"], ["Spanish", "es"]], selected: "en" %>
+  </div>
+
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
+
+
+
+<%#this script is retrieving authors from the main app and displaying them a s a dropdown menu.
+Rows' lables are author.name and the values passed are Author.id as author_id and Author.key as author_key%>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('http://localhost:3000/authors')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // Log the data received from the server
+                const authorSelect = document.getElementById('author_select');
+                const keyInput = document.getElementById('key'); // Get the hidden key input
+                if (authorSelect && keyInput) {
+                    authorSelect.addEventListener('change', () => {
+                        const selectedOption = authorSelect.options[authorSelect.selectedIndex];
+                        keyInput.value = selectedOption.getAttribute('data-key'); // Update the key input value
+                    });
+                    data.authors.forEach(author => {
+                        const option = document.createElement('option');
+                        option.value = author.id;
+                        option.setAttribute('data-key', author.key);
+                        option.textContent = author.name;
+                        authorSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Author select dropdown or key input field not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching authors:', error);
+            });
+    });
+</script>

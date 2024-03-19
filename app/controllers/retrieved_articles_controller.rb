@@ -1,8 +1,12 @@
 require "http"
 require_relative '../services/retrieved_articles/retrieve_index.rb'
+require_relative '../services/retrieved_articles/create_article_request.rb'
+
 
 class RetrievedArticlesController < ApplicationController
   before_action :set_retrieved_article, only: %i[ show update destroy ]
+  skip_before_action :verify_authenticity_token
+
 
   # GET /retrieved_articles
   def index
@@ -28,6 +32,17 @@ class RetrievedArticlesController < ApplicationController
     end
   end
 
+
+  def create_article
+    CreateArticleRequest.send_request(article_params)
+
+    # Handle the response according to your application's requirements
+    if response.code == 200
+      render status: :ok
+      #else
+      # Handle failure
+    end
+  end
   # PATCH/PUT /retrieved_articles/1
   def update
     if @retrieved_article.update(retrieved_article_params)
@@ -50,6 +65,10 @@ class RetrievedArticlesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def retrieved_article_params
-      params.fetch(:retrieved_article, {})
+      params.permit.fetch(:retrieved_article, {}).permit(:title, :body, :status, :author_id, :language)
     end
+
+  def article_params
+    params.permit(:title, :body, :status, :author_id, :language,  :authenticity_token, :commit, :author_key)
+  end
 end
