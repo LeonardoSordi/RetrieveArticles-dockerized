@@ -39,8 +39,8 @@ class RetrievedArticlesController < ApplicationController
     # Handle the response according to your application's requirements
     if response.code == 200
       render status: :ok
-      #else
-      # Handle failure
+    else
+      render json: {error: "incorrect Article POST request to main app"}, status: :bad_request
     end
   end
   # PATCH/PUT /retrieved_articles/1
