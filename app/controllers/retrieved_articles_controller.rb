@@ -1,48 +1,23 @@
 require "http"
-require_relative '../services/retrieved_articles/retrieve_index.rb'
+require 'json'
+require_relative '../services/retrieved_articles/retrieve_articles_index_request.rb'
 require_relative '../services/retrieved_articles/create_article_request.rb'
+require_relative '../services/retrieved_articles/destroy_article_request.rb'
+
 
 
 class RetrievedArticlesController < ApplicationController
-  before_action :set_retrieved_article, only: %i[ show update destroy ]
+  #before_action :set_retrieved_article, only: %i[ show update ]
   skip_before_action :verify_authenticity_token
 
 
-  # GET /retrieved_articles
-  def index
-    @retrieved_articles = RetrieveArticlesIndex.retrieve_from_api
-
-    #puts @retrieved_articles
-    #render 'retrieved_articles/index'
-  end
 
   # GET /retrieved_articles/1
   def show
     render json: @retrieved_article
   end
 
-  # POST /retrieved_articles
-  def create
-    @retrieved_article = RetrievedArticle.new(retrieved_article_params)
 
-    if @retrieved_article.save
-      render json: @retrieved_article, status: :created, location: @retrieved_article
-    else
-      render json: @retrieved_article.errors, status: :unprocessable_entity
-    end
-  end
-
-
-  def create_article
-    CreateArticleRequest.send_request(article_params)
-
-    # Handle the response according to your application's requirements
-    if response.code == 200
-      render status: :ok
-    else
-      render json: {error: "incorrect Article POST request to main app"}, status: :bad_request
-    end
-  end
   # PATCH/PUT /retrieved_articles/1
   def update
     if @retrieved_article.update(retrieved_article_params)
@@ -52,9 +27,41 @@ class RetrievedArticlesController < ApplicationController
     end
   end
 
-  # DELETE /retrieved_articles/1
+
+
+  #----HTTP CALLS TO MAIN BLOG APP----#
+
+  # GET Articles
+  def index
+    @retrieved_articles = RetrieveArticlesIndexRequest.retrieve_from_api
+  end
+
+
+  #POST Article
+  def create_article
+    response = CreateArticleRequest.send_request(article_params)
+    if response.code  < 300
+      render json: {status: "POST request completed. Response code: #{response}"}
+    else
+      render json: {error: "unable to process Article POST request to main app. Response code: #{response.code} "}, status: :bad_request
+    end
+  end
+
+
+  #DELETE Article
   def destroy
-    @retrieved_article.destroy!
+    article_id = params[:article_id]
+
+    author_key = DestroyArticleRequest.send_request(article_id)
+    puts "RISPOSTA:"
+    puts author_key
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+
+    if response.code <= 300
+      render json: {status: "POST request completed. Response code: #{response}"}
+    else
+      render json: {error: "unable to process Article DELETE request to main app. Response code: #{response.code} "}, status: :bad_request
+    end
   end
 
   private

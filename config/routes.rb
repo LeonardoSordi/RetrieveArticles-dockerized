@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   post "retrieved_articles/create_article" => "retrieved_articles#create_article", as: :create_article
+  delete "retrieved_articles/delete_article", to: "retrieved_articles#delete_article", as: :delete_article
 
   root 'retrieved_articles#index'
 

@@ -5,14 +5,55 @@
 <head>
   <title>Articles</title>
 </head>
+
 <body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch author keys for each article
+        const authorIds = <%= @retrieved_articles['articles'].map { |article| article['author_id'] }.to_json %>;
+        authorIds.forEach(authorId => {
+            fetchAuthorKey(authorId);
+        });
+    });
+
+    // Function to fetch author key based on author ID
+    function fetchAuthorKey(authorId) {
+        fetch(`http://external-app-url/authors/${authorId}`)
+            .then(response => response.json())
+            .then(data => {
+                const authorKey = data.author.key; // Assuming the response structure contains the author's key
+                const authorKeyInput = document.getElementById(`author_key_${authorId}`);
+                if (authorKeyInput) {
+                    authorKeyInput.value = authorKey;
+                } else {
+                    console.error(`Author key input element not found for author ID ${authorId}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching author key:', error);
+            });
+    }
+</script>
+
+
 <h1>Articles</h1>
 <ul>
   <% @retrieved_articles['articles'].each do |retrieved_article| %>
     <li>
+      <!-- Display article -->
       <h2><%= retrieved_article['title'] %></h2>
       <p><%= retrieved_article['body'] %></p>
       <br></br>
+
+      <%= hidden_field_tag "articles[][author_key]", "", id: "author_key_#{retrieved_article['id']}" %>
+
+      <!-- Edit article -->
+      <%= button_to "Edit", edit_retrieved_article_path(retrieved_article['id']), class: "btn btn-primary" %>
+
+      <!-- Destroy article -->
+      <%= button_to "Delete Article", delete_article_path, method: :delete, params: { article_id: retrieved_article['id']} %>
+
     </li>
   <% end %>
 </ul>
@@ -20,6 +61,4 @@
 </html>
 
 <%= link_to "New Article", new_retrieved_article_path %>
-
-
 

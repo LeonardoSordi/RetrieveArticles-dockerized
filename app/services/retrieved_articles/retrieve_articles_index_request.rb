@@ -1,5 +1,5 @@
 require "http"
-class RetrieveArticlesIndex
+class RetrieveArticlesIndexRequest
 
   def self.retrieve_from_api
     response = HTTP.get("http://api:3000/articles")

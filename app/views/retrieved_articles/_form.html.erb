@@ -1,4 +1,4 @@
-<%= form_with(url: create_article_path, method: 'post') do |form| %>
+<%= form_with(url: create_article_path) do |form| %>
 
   <%#try to avoid InvalidAuthenticityToken %>
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
