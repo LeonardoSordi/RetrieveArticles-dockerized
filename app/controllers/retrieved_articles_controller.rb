@@ -52,13 +52,13 @@ class RetrievedArticlesController < ApplicationController
   def destroy
     article_id = params[:article_id]
 
-    author_key = DestroyArticleRequest.send_request(article_id)
+    response = DestroyArticleRequest.send_request(article_id)
     puts "RISPOSTA:"
-    puts author_key
+    puts response
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
     if response.code <= 300
-      render json: {status: "POST request completed. Response code: #{response}"}
+      render json: {status: "POST request completed. Response code: #{response.code}"}
     else
       render json: {error: "unable to process Article DELETE request to main app. Response code: #{response.code} "}, status: :bad_request
     end
