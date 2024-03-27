@@ -51,8 +51,12 @@ class RetrievedArticlesController < ApplicationController
   #DELETE Article
   def destroy
     article_id = params[:article_id]
+    author_key= params[:author_key]
 
-    response = DestroyArticleRequest.send_request(article_id)
+    puts author_key
+    puts article_id
+
+    response = DestroyArticleRequest.send_request(article_id, author_key)
     puts "RISPOSTA:"
     puts response
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
